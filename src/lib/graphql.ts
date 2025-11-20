@@ -21,7 +21,9 @@ function initializeGraphQLClient(): GraphQLClient {
     throw new Error(
       `❌ CRITICAL ERROR: WPGRAPHQL_ENDPOINT is not configured!\n\n` +
       `The application cannot start without a valid WordPress GraphQL endpoint.\n` +
-      `Please set WPGRAPHQL_ENDPOINT in your .env.local file.\n\n` +
+      `Please set WPGRAPHQL_ENDPOINT as an environment variable.\n\n` +
+      `For local development: Set in .env.local file\n` +
+      `For Cloudflare Pages: Set in Cloudflare dashboard > Pages > Settings > Environment Variables\n\n` +
       `Example:\n` +
       `WPGRAPHQL_ENDPOINT=https://your-site.com/graphql\n`
     );

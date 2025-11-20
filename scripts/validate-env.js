@@ -151,23 +151,10 @@ function logEnvStatus(vars) {
   }
 }
 
-// Load .env.local file
-const fs = require('fs');
-const path = require('path');
-const dotenv = require('dotenv');
-
-const envPath = path.join(process.cwd(), '.env.local');
-
-if (!fs.existsSync(envPath)) {
-  console.error('❌ .env.local file not found');
-  process.exit(1);
-}
-
-// Load environment variables from .env.local
-const envConfig = dotenv.parse(fs.readFileSync(envPath));
-
-// Merge with existing process.env
-const envVars = { ...process.env, ...envConfig };
+// Read environment variables directly from process.env
+// This works with Cloudflare Pages where env vars are set via the dashboard
+// and also works locally with .env.local (Next.js automatically loads it)
+const envVars = process.env;
 
 // Run validation
 try {

@@ -167,10 +167,16 @@ export function validateEnvVarsOrThrow(vars: Record<string, string | undefined>)
 ${result.errors.map((e) => `║  ❌ ${e.variable}: ${e.message}`).join('\n║\n')}
 ║                                                                ║
 ║  SOLUTION:                                                    ║
+║  For local development:                                       ║
 ║  1. Copy .env.example to .env.local                           ║
 ║  2. Fill in all required values                               ║
 ║  3. Never commit .env.local to version control                ║
-║  4. Try building again                                        ║
+║                                                                ║
+║  For Cloudflare Pages:                                        ║
+║  1. Go to Cloudflare dashboard > Pages > Settings             ║
+║  2. Navigate to Environment Variables                         ║
+║  3. Add all required environment variables                    ║
+║  4. Redeploy your site                                        ║
 ║                                                                ║
 ╚════════════════════════════════════════════════════════════════╝
 `;
