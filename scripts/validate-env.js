@@ -120,11 +120,60 @@ function validateEnvVarsOrThrow(vars) {
   const result = validateEnvVars(vars);
   
   if (!result.isValid) {
+    // Get all required variable names for reference
+    const allRequiredVars = Object.entries(REQUIRED_ENV_VARS)
+      .filter(([_, config]) => config.required)
+      .map(([name]) => name);
+    
     const errorMessages = [
-      'Environment validation failed:',
-      ...result.missingVariables.map(v => `- Missing required variable: ${v}`),
-      ...result.errors.map(e => `- ${e.variable}: ${e.message}`),
+      '╔════════════════════════════════════════════════════════════════╗',
+      '║  🚨 ENVIRONMENT CONFIGURATION ERROR                           ║',
+      '║                                                                ║',
+      '║  Missing or invalid environment variables detected.            ║',
+      '║                                                                ║',
     ];
+    
+    if (result.missingVariables.length > 0) {
+      errorMessages.push('║  Missing required variables:');
+      result.missingVariables.forEach(v => {
+        errorMessages.push(`║    ❌ ${v}`);
+      });
+      errorMessages.push('║                                                                ║');
+    }
+    
+    if (result.errors.length > 0) {
+      errorMessages.push('║  Invalid variable values:');
+      result.errors.forEach(e => {
+        errorMessages.push(`║    ❌ ${e.variable}: ${e.message}`);
+      });
+      errorMessages.push('║                                                                ║');
+    }
+    
+    errorMessages.push(
+      '║  📋 ALL REQUIRED VARIABLES:                                   ║',
+      '║                                                                ║'
+    );
+    allRequiredVars.forEach(v => {
+      const isMissing = result.missingVariables.includes(v);
+      const marker = isMissing ? '❌' : '✅';
+      errorMessages.push(`║    ${marker} ${v}`);
+    });
+    
+    errorMessages.push(
+      '║                                                                ║',
+      '║  🔧 SOLUTION FOR CLOUDFLARE PAGES:                          ║',
+      '║                                                                ║',
+      '║  1. Go to Cloudflare Dashboard                                ║',
+      '║  2. Navigate to: Pages > Your Project > Settings              ║',
+      '║  3. Click on "Environment Variables"                          ║',
+      '║  4. Add all required variables listed above                   ║',
+      '║  5. Make sure to set them for "Production" environment        ║',
+      '║  6. Redeploy your site                                        ║',
+      '║                                                                ║',
+      '╚════════════════════════════════════════════════════════════════╝',
+      '',
+      'For local development, create a .env.local file with these variables.'
+    );
     
     throw new Error(errorMessages.join('\n'));
   }
