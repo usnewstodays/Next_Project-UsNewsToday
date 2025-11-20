@@ -2,18 +2,11 @@
 const nextConfig = {
   // Disable source maps in production
   productionBrowserSourceMaps: false,
-  images: {
-    formats: ['image/avif', 'image/webp'], // Modern image formats
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
-    dangerouslyAllowSVG: false,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-  },
   reactStrictMode: true,
   
   // Optimization flags for TLS and security
-  compress: true,
+  // Note: compress is disabled for Cloudflare Pages compatibility
+  compress: false,
   poweredByHeader: false,
   
   // Security headers
@@ -71,7 +64,9 @@ const nextConfig = {
     PUBLIC_GA_ID: process.env.PUBLIC_GA_ID
   },
 
-  // Image optimization
+  // Image configuration for Cloudflare Pages
+  // Cloudflare Pages doesn't support Next.js Image Optimization API
+  // so we must use unoptimized images
   images: {
     remotePatterns: [
       {
@@ -83,8 +78,13 @@ const nextConfig = {
         hostname: 'localhost',
       },
     ],
-    unoptimized: false,
+    unoptimized: true, // Required for Cloudflare Pages compatibility
     formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+    dangerouslyAllowSVG: false,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
   // Webpack configuration with optimizations
@@ -130,23 +130,7 @@ const nextConfig = {
       config.optimization.minimizer = existingMinimizer;
     }
     
-    // Add file and url loaders for images
-    config.module.rules.push({
-      test: /\.(png|jpg|jpeg|gif|webp|svg)$/i,
-      use: [
-        {
-          loader: 'url-loader',
-          options: {
-            limit: 8192, // 8KB
-            name: 'static/media/[name].[hash:8].[ext]',
-            publicPath: '/_next/static/media/',
-            outputPath: 'static/media/',
-          },
-        },
-      ],
-    });
-    
-    // Resolve fallbacks
+    // Resolve fallbacks for Cloudflare Pages compatibility
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
