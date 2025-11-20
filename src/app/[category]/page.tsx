@@ -3,17 +3,20 @@ import ArticleCard from '@/components/ArticleCard';
 import Pagination from '@/components/Pagination';
 import Link from 'next/link';
 
+export const runtime = 'edge';
+
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     category: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     page?: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: CategoryPageProps) {
-  const categoryName = params.category.replace('-', ' ');
+  const { category } = await params;
+  const categoryName = category.replace('-', ' ');
   return {
     title: `${categoryName.charAt(0).toUpperCase() + categoryName.slice(1)} Articles`,
     description: `Read articles about ${categoryName.toLowerCase()}`,
@@ -24,7 +27,9 @@ export default async function CategoryPage({
   params,
   searchParams,
 }: CategoryPageProps) {
-  const currentPage = parseInt(searchParams.page || '1', 10);
+  const { category } = await params;
+  const { page } = await searchParams;
+  const currentPage = parseInt(page || '1', 10);
   const postsPerPage = 12;
 
   // Fetch posts for category
@@ -33,7 +38,7 @@ export default async function CategoryPage({
     allPosts?.nodes?.filter(
       (post: any) =>
         post.categories?.nodes?.some(
-          (cat: any) => cat.slug === params.category
+          (cat: any) => cat.slug === category
         )
     ) || [];
 
@@ -43,7 +48,7 @@ export default async function CategoryPage({
     currentPage * postsPerPage
   );
 
-  const categoryName = params.category.replace('-', ' ').toUpperCase();
+  const categoryName = category.replace('-', ' ').toUpperCase();
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-gray-900">
@@ -75,7 +80,7 @@ export default async function CategoryPage({
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
-                  baseUrl={`/${params.category}`}
+                  baseUrl={`/${category}`}
                 />
               )}
             </>

@@ -3,16 +3,19 @@ import ArticleCard from '@/components/ArticleCard';
 import Link from 'next/link';
 import Image from 'next/image';
 
+export const runtime = 'edge';
+
 interface AuthorPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default async function AuthorPage({ params }: AuthorPageProps) {
+  const { slug } = await params;
   const allPosts = await getPosts(100);
   const authorPosts = allPosts?.nodes?.filter(
-    (post: any) => post.author?.node?.slug === params.slug
+    (post: any) => post.author?.node?.slug === slug
   ) || [];
 
   const author = authorPosts[0]?.author?.node;

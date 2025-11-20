@@ -6,6 +6,8 @@ import ArticleCard from '@/components/ArticleCard';
 import CopyLinkButton from '@/components/CopyLinkButton';
 import type { Metadata } from 'next';
 
+export const runtime = 'edge';
+
 interface ArticlePageProps {
   params: Promise<{
     category: string;
