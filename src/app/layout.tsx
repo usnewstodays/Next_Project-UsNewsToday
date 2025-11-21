@@ -3,8 +3,7 @@ import { validateEnvVarsOrThrow } from '@/lib/env-validation';
 import '@/styles/global.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import GoogleAnalytics from '@/components/GoogleAnalytics';
-import CustomAdsScripts from '@/components/CustomAdsScripts';
+import CustomHeadScripts from '@/components/CustomHeadScripts';
 
 // Validate environment variables at build/startup time
 if (typeof window === 'undefined') {
@@ -80,11 +79,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google Analytics 4 */}
-        <GoogleAnalytics />
-
-        {/* Custom Ads Scripts */}
-        <CustomAdsScripts />
+        {/* Centralized Custom Head Scripts (Google Analytics, Ads, etc.) */}
+        <CustomHeadScripts />
 
         {/* Organization Schema */}
         <script
